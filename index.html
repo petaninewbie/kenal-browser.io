@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Pembelajaran: Search Engine</title>
+    <style>
+        /* --- CSS STYLING --- */
+        :root {
+            --primary: #4285F4; /* Google Blue */
+            --secondary: #34A853; /* Google Green */
+            --accent: #EA4335; /* Google Red */
+            --warning: #FBBC05; /* Google Yellow */
+            --light: #f8f9fa;
+            --dark: #202124;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        /* Navigation */
+        nav {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links button {
+            background: none;
+            border: none;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: #5f6368;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+
+        .nav-links button:hover, .nav-links button.active {
+            background-color: #e8f0fe;
+            color: var(--primary);
+        }
+
+        /* Content Sections */
+        main {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            min-height: 80vh;
+        }
+
+        .section {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s;
+        }
+
+        .section.active {
+            display: block; /* Show if active */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { color: var(--dark); border-bottom: 3px solid var(--primary); display: inline-block; padding-bottom: 5px; }
+        h2 { color: #5f6368; margin-top: 1.5rem; }
+        p { line-height: 1.6; font-size: 1.1rem; }
+
+        /* Timeline Style for History */
+        .timeline-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Cards for Google Types */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { margin-top: 0; color: var(--primary); }
+
+        /* Practice Module Styling */
+        .practice-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-top: 5px solid var(--secondary);
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            font-size: 1.2rem;
+            width: 100px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .btn-check {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-check:hover { background-color: #3367d6; }
+
+        #result-box {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--dark);
+            padding: 15px;
+            background: #e8f0fe;
+            border-radius: 5px;
+            display: none;
+        }
+
+        /* QUIZ STYLING */
+        .quiz-container {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .question-item {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .question-text {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .options label:hover {
+            background-color: #f1f3f4;
+        }
+        #quiz-result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #eee;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">E-Learning</div>
+        <div class="nav-links">
+            <button onclick="showSection('home')" class="active" id="btn-home">Beranda</button>
+            <button onclick="showSection('history')" id="btn-history">1. Sejarah</button>
+            <button onclick="showSection('howto')" id="btn-howto">2. Cara Mencari</button>
+            <button onclick="showSection('types')" id="btn-types">3. Jenis Google</button>
+            <button onclick="showSection('practice')" id="btn-practice">4. Praktek</button>
+            <button onclick="showSection('quiz')" id="btn-quiz" style="color: var(--accent);">5. Kuis</button>
+        </div>
+    </nav>
+
+    <main>
+        <section id="home" class="section active">
+            <h1>Selamat Datang</h1>
+            <p>Selamat datang di Media Pembelajaran Berbasis Web.</p>
+            <p>Aplikasi ini dirancang untuk membantu Anda memahami konsep dasar mesin pencari, bagaimana cara menggunakannya secara efektif, serta mengenal ekosistem Google lebih dalam.</p>
+            <div style="background: #e6f4ea; padding: 20px; border-radius: 8px; margin-top:20px;">
+                <strong>Menu Materi:</strong>
+                <ul>
+                    <li>Sejarah browser dan search engine.</li>
+                    <li>Teknik pencarian (Google Dorks).</li>
+                    <li>Jenis-jenis layanan Google.</li>
+                    <li>Tugas praktek & Kuis evaluasi.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="history" class="section">
+            <h1>1. Sejarah Pencarian</h1>
+            
+            <p>Perjalanan panjang dari Archie hingga kecerdasan buatan Google saat ini.</p>
+            
+            <div class="timeline-item">
+                <h3>1990 - Archie</h3>
+                <p>Mesin pencari pertama di dunia untuk mengindeks file FTP.</p>
+            </div>
+            <div class="timeline-item">
+                <h3>1998 - Google</h3>
+                <p>Didirikan oleh Larry Page dan Sergey Brin di garasi Susan Wojcicki.</p>
+            </div>
+            <div class="timeline-item">
+                <h3>2008 - Chrome</h3>
+                <p>Google meluncurkan browser web Chrome yang mendominasi pasar hingga kini.</p>
+            </div>
+        </section>
+
+        <section id="howto" class="section">
+            <h1>2. Cara Melakukan Pencarian</h1>
+            <p>Gunakan operator khusus untuk hasil yang lebih akurat:</p>
+
+            <div class="card" style="border-left: 5px solid var(--warning); margin-bottom: 15px;">
+                <h3>Rumus Penting (Google Dorks)</h3>
+                <ul>
+                    <li><code>"kata kunci"</code> : Mencari kalimat yang persis sama.</li>
+                    <li><code>filetype:pdf</code> : Mencari dokumen format PDF.</li>
+                    <li><code>site:ac.id</code> : Mencari hanya di website kampus/akademik.</li>
+                    <li><code>-kata</code> : Membuang hasil yang mengandung kata tersebut.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="types" class="section">
+            <h1>3. Jenis Layanan Google</h1>
+            <div class="grid-container">
+                <div class="card">
+                    <h3>Google Scholar</h3>
+                    <p>Mencari jurnal ilmiah dan referensi skripsi.</p>
+                </div>
+                <div class="card">
+                    <h3>Google Drive</h3>
+                    <p>Menyimpan data di cloud (awan).</p>
+                </div>
+                <div class="card">
+                    <h3>Google Classroom</h3>
+                    <p>Kelas virtual untuk pengumpulan tugas.</p>
+                </div>
+                <div class="card">
+                    <h3>Google Forms</h3>
+                    <p>Membuat survei atau kuis online.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="practice" class="section">
+            <h1>4. Modul Praktek</h1>
+            <div class="practice-box">
+                <h2>Generator Topik PPT</h2>
+                <p>Masukkan Nomor Absen untuk mendapatkan topik tugas Anda.</p>
+                
+                <input type="number" id="absenInput" placeholder="No. Absen" min="1">
+                <br>
+                <button class="btn-check" onclick="cekTopik()">Dapatkan Topik</button>
+
+                <div id="result-box">
+                    Topik: <span id="topic-text" style="color: var(--primary);"></span>
+                </div>
+            </div>
+        </section>
+
+        <section id="quiz" class="section">
+            <h1>5. Kuis Evaluasi</h1>
+            <p>Jawablah pertanyaan berikut untuk menguji pemahaman Anda. (Skor per soal: 20)</p>
+            
+            <div class="quiz-container">
+                <form id="quizForm">
+                    <div class="question-item">
+                        <span class="question-text">1. Siapakah pendiri Google?</span>
+                        <div class="options">
+                            <label><input type="radio" name="q1" value="a"> Bill Gates & Paul Allen</label>
+                            <label><input type="radio" name="q1" value="b"> Larry Page & Sergey Brin</label>
+                            <label><input type="radio" name="q1" value="c"> Steve Jobs & Wozniak</label>
+                        </div>
+                    </div>
+
+                    <div class="question-item">
+                        <span class="question-text">2. Mesin pencari pertama di dunia bernama...</span>
+                        <div class="options">
+                            <label><input type="radio" name="q2" value="a"> Google</label>
+                            <label><input type="radio" name="q2" value="b"> Yahoo</label>
+                            <label><input type="radio" name="q2" value="c"> Archie</label>
+                        </div>
+                    </div>
+
+                    <div class="question-item">
+                        <span class="question-text">3. Jika ingin mencari file dokumen PDF, perintah yang digunakan adalah...</span>
+                        <div class="options">
+                            <label><input type="radio" name="q3" value="a"> filetype:pdf</label>
+                            <label><input type="radio" name="q3" value="b"> format:pdf</label>
+                            <label><input type="radio" name="q3" value="c"> site:pdf</label>
+                        </div>
+                    </div>
+
+                    <div class="question-item">
+                        <span class="question-text">4. Layanan Google yang digunakan khusus untuk mencari jurnal ilmiah adalah...</span>
+                        <div class="options">
+                            <label><input type="radio" name="q4" value="a"> Google Trends</label>
+                            <label><input type="radio" name="q4" value="b"> Google Scholar</label>
+                            <label><input type="radio" name="q4" value="c"> Google Classroom</label>
+                        </div>
+                    </div>
+
+                    <div class="question-item">
+                        <span class="question-text">5. Tanda minus (-) dalam pencarian Google berfungsi untuk...</span>
+                        <div class="options">
+                            <label><input type="radio" name="q5" value="a"> Menambahkan kata</label>
+                            <label><input type="radio" name="q5" value="b"> Mencari sinonim</label>
+                            <label><input type="radio" name="q5" value="c"> Mengecualikan kata</label>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-check" onclick="submitQuiz()">Kirim Jawaban</button>
+                </form>
+
+                <div id="quiz-result"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Media Pembelajaran Teknologi Informasi.</p>
+    </footer>
+
+    <script>
+        // --- LOGIKA 1: DATABASE TOPIK ---
+        const topikGoogle = [
+            "Google Search (Fitur Lanjutan)", "Google Scholar", "Google Maps", 
+            "Google Drive", "Google Classroom", "Google Meet", 
+            "Google Trends", "Google Forms", "Youtube", "Google Photos"
+        ];
+
+        // --- LOGIKA 2: NAVIGASI ---
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.nav-links button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(sectionId).classList.add('active');
+            document.getElementById('btn-' + sectionId).classList.add('active');
+        }
+
+        // --- LOGIKA 3: GENERATOR TOPIK ---
+        function cekTopik() {
+            const absen = document.getElementById('absenInput').value;
+            const resultBox = document.getElementById('result-box');
+            
+            if (absen && absen > 0) {
+                const index = (absen - 1) % topikGoogle.length;
+                document.getElementById('topic-text').textContent = topikGoogle[index];
+                resultBox.style.display = 'block';
+            } else {
+                alert("Masukkan nomor absen yang benar!");
+            }
+        }
+
+        // --- LOGIKA 4: SISTEM KUIS (BARU) ---
+        function submitQuiz() {
+            // Kunci Jawaban
+            const answers = {
+                q1: 'b', // Larry Page
+                q2: 'c', // Archie
+                q3: 'a', // filetype
+                q4: 'b', // Scholar
+                q5: 'c'  // Mengecualikan
+            };
+
+            let score = 0;
+            let totalQuestions = 5;
+            let feedback = "";
+
+            // Loop untuk cek jawaban
+            for (let i = 1; i <= totalQuestions; i++) {
+                const qName = 'q' + i;
+                const selected = document.querySelector(`input[name="${qName}"]:checked`);
+                
+                if (selected && selected.value === answers[qName]) {
+                    score += 20; // 100 dibagi 5 soal = 20 poin per soal
+                }
+            }
+
+            // Tampilkan Hasil
+            const resultDiv = document.getElementById('quiz-result');
+            resultDiv.style.display = 'block';
+            
+            if (score >= 80) {
+                resultDiv.style.backgroundColor = '#d4edda';
+                resultDiv.style.color = '#155724';
+                feedback = "Luar Biasa! Anda memahami materi dengan sangat baik.";
+            } else if (score >= 60) {
+                resultDiv.style.backgroundColor = '#fff3cd';
+                resultDiv.style.color = '#856404';
+                feedback = "Cukup Bagus, namun coba pelajari lagi bagian yang salah.";
+            } else {
+                resultDiv.style.backgroundColor = '#f8d7da';
+                resultDiv.style.color = '#721c24';
+                feedback = "Silakan baca kembali materi dan coba lagi.";
+            }
+
+            resultDiv.innerHTML = `Skor Anda: ${score} / 100<br><small>${feedback}</small>`;
+            
+            // Scroll ke hasil
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
